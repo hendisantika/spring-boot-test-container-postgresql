@@ -70,4 +70,12 @@ class SpringBootTestContainerPostgresqlApplicationTests {
         assertThat(response.getBody().title()).isEqualTo("101 Title");
         assertThat(response.getBody().body()).isEqualTo("101 Body");
     }
+
+    @Test
+    void shouldNotCreateNewPostWhenValidationFails() {
+        Post post = new Post(101, 1, "", "", null);
+        ResponseEntity<Post> response = restTemplate.exchange("/api/posts", HttpMethod.POST, new HttpEntity<Post>(post), Post.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
 }
