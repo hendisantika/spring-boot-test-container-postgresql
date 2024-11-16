@@ -2,6 +2,7 @@ package id.my.hendisantika.testcontainerpostgresql.controller;
 
 import id.my.hendisantika.testcontainerpostgresql.model.Post;
 import id.my.hendisantika.testcontainerpostgresql.repository.PostRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -33,4 +34,11 @@ class PostControllerTest {
 
     List<Post> posts = new ArrayList<>();
 
+    @BeforeEach
+    void setUp() {
+        posts = List.of(
+                new Post(1, 1, "Hello, World!", "This is my first post.", null),
+                new Post(2, 1, "Second Post", "This is my second post.", null)
+        );
+    }
 }
