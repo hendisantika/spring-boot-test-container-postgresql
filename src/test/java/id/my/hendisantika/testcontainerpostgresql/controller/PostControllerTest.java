@@ -143,4 +143,24 @@ class PostControllerTest {
                         .content(requestBody))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void shouldNotUpdateAndThrowNotFoundWhenGivenAnInvalidPostID() throws Exception {
+        Post updated = new Post(50, 1, "This is my brand new post", "UPDATED BODY", 1);
+        when(repository.save(updated)).thenReturn(updated);
+        String json = STR."""
+                {
+                    "id":\{updated.id()},
+                    "userId":\{updated.userId()},
+                    "title":"\{updated.title()}",
+                    "body":"\{updated.body()}",
+                    "version": \{updated.version()}
+                }
+                """;
+
+        mockMvc.perform(put("/api/posts/999")
+                        .contentType("application/json")
+                        .content(json))
+                .andExpect(status().isNotFound());
+    }
 }
