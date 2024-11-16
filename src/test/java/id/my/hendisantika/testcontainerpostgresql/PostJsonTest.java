@@ -38,4 +38,24 @@ public class PostJsonTest {
                 """;
         assertThat(jacksonTester.write(post)).isEqualToJson(expected);
     }
+
+    @Test
+    void shouldDeserializePost() throws Exception {
+        Post post = new Post(1, 1, "Hello, World!", "This is my first post.", null);
+        String content = STR."""
+                {
+                    "id":\{post.id()},
+                    "userId":\{post.userId()},
+                    "title":"\{post.title()}",
+                    "body":"\{post.body()}",
+                    "version": null
+                }
+                """;
+
+        assertThat(jacksonTester.parse(content)).isEqualTo(post);
+        assertThat(jacksonTester.parseObject(content).id()).isEqualTo(1);
+        assertThat(jacksonTester.parseObject(content).userId()).isEqualTo(1);
+        assertThat(jacksonTester.parseObject(content).title()).isEqualTo("Hello, World!");
+        assertThat(jacksonTester.parseObject(content).body()).isEqualTo("This is my first post.");
+    }
 }
