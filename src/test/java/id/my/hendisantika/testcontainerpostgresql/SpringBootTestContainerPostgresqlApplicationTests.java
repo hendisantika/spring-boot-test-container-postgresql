@@ -78,4 +78,20 @@ class SpringBootTestContainerPostgresqlApplicationTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
+
+    @Test
+    @Rollback
+    void shouldUpdatePostWhenPostIsValid() {
+        ResponseEntity<Post> response = restTemplate.exchange("/api/posts/99", HttpMethod.GET, null, Post.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        Post existing = response.getBody();
+        assertThat(existing).isNotNull();
+        Post updated = new Post(existing.id(), existing.userId(), "NEW POST TITLE #1", "NEW POST BODY #1", existing.version());
+
+        assertThat(updated.id()).isEqualTo(99);
+        assertThat(updated.userId()).isEqualTo(10);
+        assertThat(updated.title()).isEqualTo("NEW POST TITLE #1");
+        assertThat(updated.body()).isEqualTo("NEW POST BODY #1");
+    }
 }
