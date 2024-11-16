@@ -15,6 +15,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,7 +34,7 @@ public class PostRepositoryTest {
 
     @Container
     @ServiceConnection
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17-alpine-3.20");
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17-alpine3.20");
 
     @Autowired
     PostRepository postRepository;
@@ -51,6 +52,12 @@ public class PostRepositoryTest {
     void connectionEstablished() {
         assertThat(postgres.isCreated()).isTrue();
         assertThat(postgres.isRunning()).isTrue();
+    }
+
+    @Test
+    void shouldReturnPostByTitle() {
+        Post post = postRepository.findByTitle("Hello, World!").orElseThrow();
+        assertEquals("Hello, World!", post.title(), "Post title should be 'Hello, World!'");
     }
 
 }
