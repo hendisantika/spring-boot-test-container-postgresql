@@ -1,11 +1,16 @@
 package id.my.hendisantika.testcontainerpostgresql;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import id.my.hendisantika.testcontainerpostgresql.model.Posts;
 import id.my.hendisantika.testcontainerpostgresql.repository.PostRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,4 +33,19 @@ class PostDataLoader implements CommandLineRunner {
         this.objectMapper = objectMapper;
         this.postRepository = postRepository;
     }
+
+    @Override
+    public void run(String... args) throws Exception {
+        if (postRepository.count() == 0) {
+            String POSTS_JSON = "/data/posts.json";
+            log.info("Loading posts into database from JSON: {}", POSTS_JSON);
+            try (InputStream inputStream = TypeReference.class.getResourceAsStream(POSTS_JSON)) {
+                Posts response = objectMapper.readValue(inputStream, Posts.class);
+                postRepository.saveAll(response.posts());
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read JSON data", e);
+            }
+        }
+    }
+
 }
