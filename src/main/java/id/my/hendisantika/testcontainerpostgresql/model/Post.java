@@ -14,7 +14,7 @@ import org.springframework.data.annotation.Version;
  * Time: 05.18
  * To change this template use File | Settings | File Templates.
  */
-record Post(
+public record Post(
         @Id
         Integer id,
         Integer userId,
