@@ -13,9 +13,11 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Created by IntelliJ IDEA.
@@ -60,4 +62,9 @@ public class PostRepositoryTest {
         assertEquals("Hello, World!", post.title(), "Post title should be 'Hello, World!'");
     }
 
+    @Test
+    void shouldNotReturnPostWhenTitleIsNotFound() {
+        Optional<Post> post = postRepository.findByTitle("Hello, Wrong Title!");
+        assertFalse(post.isPresent(), "Post should not be present");
+    }
 }
