@@ -1,5 +1,6 @@
 package id.my.hendisantika.testcontainerpostgresql;
 
+import id.my.hendisantika.testcontainerpostgresql.model.Post;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,4 +30,11 @@ class SpringBootTestContainerPostgresqlApplicationTests {
         assertThat(postgres.isCreated()).isTrue();
         assertThat(postgres.isRunning()).isTrue();
     }
+
+    @Test
+    void shouldFindAllPosts() {
+        Post[] posts = restTemplate.getForObject("/api/posts", Post[].class);
+        assertThat(posts.length).isGreaterThan(100);
+    }
+
 }
