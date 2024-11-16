@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -97,6 +98,27 @@ class PostControllerTest {
 
         mockMvc.perform(get("/api/posts/1"))
                 .andExpect(status().isOk())
+                .andExpect(content().json(json));
+    }
+
+    @Test
+    void shouldCreateNewPostWhenGivenValidID() throws Exception {
+        Post post = new Post(3, 1, "This is my brand new post", "TEST BODY", null);
+        when(repository.save(post)).thenReturn(post);
+        String json = STR."""
+                {
+                    "id":\{post.id()},
+                    "userId":\{post.userId()},
+                    "title":"\{post.title()}",
+                    "body":"\{post.body()}",
+                    "version": null
+                }
+                """;
+
+        mockMvc.perform(post("/api/posts")
+                        .contentType("application/json")
+                        .content(json))
+                .andExpect(status().isCreated())
                 .andExpect(content().json(json));
     }
 }
