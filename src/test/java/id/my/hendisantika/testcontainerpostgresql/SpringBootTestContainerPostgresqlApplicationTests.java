@@ -94,4 +94,11 @@ class SpringBootTestContainerPostgresqlApplicationTests {
         assertThat(updated.title()).isEqualTo("NEW POST TITLE #1");
         assertThat(updated.body()).isEqualTo("NEW POST BODY #1");
     }
+
+    @Test
+    @Rollback
+    void shouldDeleteWithValidID() {
+        ResponseEntity<Void> response = restTemplate.exchange("/api/posts/88", HttpMethod.DELETE, null, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
 }
