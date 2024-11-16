@@ -46,4 +46,10 @@ class SpringBootTestContainerPostgresqlApplicationTests {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
     }
+
+    @Test
+    void shouldThrowNotFoundWhenInvalidPostID() {
+        ResponseEntity<Post> response = restTemplate.exchange("/api/posts/999", HttpMethod.GET, null, Post.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
 }
