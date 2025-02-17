@@ -27,7 +27,7 @@ class SpringBootTestContainerPostgresqlApplicationTests {
 
     @Container
     @ServiceConnection
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.0");
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17.3-alpine3.21");
 
     @Autowired
     TestRestTemplate restTemplate;
