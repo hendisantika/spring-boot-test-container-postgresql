@@ -1,7 +1,7 @@
 services:
   postgres:
     container_name: blog_postgres_db
-    image: 'postgres:17-alpine3.20'
+    image: 'postgres:17.5-alpine3.22'
     environment:
       - 'POSTGRES_DB=blog'
       - 'POSTGRES_USER=yuji'
