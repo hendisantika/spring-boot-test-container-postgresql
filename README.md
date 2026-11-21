@@ -1,5 +1,10 @@
 # Spring Boot Test Container PostgreSQL
 
+[![Java CI with Maven](https://github.com/hendisantika/spring-boot-test-container-postgresql/actions/workflows/maven.yml/badge.svg)](https://github.com/hendisantika/spring-boot-test-container-postgresql/actions/workflows/maven.yml)
+![Java](https://img.shields.io/badge/Java-25-orange?logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.x-6DB33F?logo=springboot)
+![Testcontainers](https://img.shields.io/badge/Testcontainers-2.x-2496ED?logo=docker)
+
 A demonstration project showcasing the integration of Spring Boot with Testcontainers for PostgreSQL database testing.
 
 ## Overview
@@ -9,21 +14,23 @@ Testcontainers for integration testing with a real PostgreSQL database.
 
 ## Technologies Used
 
-- Java 21 (with preview features)
-- Spring Boot 3.5.0
+- Java 25 (LTS, no preview features required)
+- Spring Boot 4.1.x
 - Spring Data JDBC
 - Spring WebFlux (WebClient)
-- PostgreSQL
-- Testcontainers
+- Jackson 3 (`tools.jackson`)
+- PostgreSQL 17.5 (Alpine)
+- Testcontainers 2.x
 - Docker & Docker Compose
-- Maven
-- Springdoc OpenAPI
+- Maven (Maven Wrapper included)
+- Springdoc OpenAPI 3.x
+- Lombok
 
 ## Prerequisites
 
-- Java 21 or higher
-- Docker and Docker Compose
-- Maven
+- JDK 25 or higher (e.g. [Eclipse Temurin](https://adoptium.net/))
+- Docker and Docker Compose (required by Testcontainers and `compose.yaml`)
+- Maven 3.9+ (or use the bundled `./mvnw`)
 
 ## Getting Started
 
@@ -54,8 +61,11 @@ java -jar target/test-container-postgresql-0.0.1-SNAPSHOT.jar
 The project includes a `compose.yaml` file for running the PostgreSQL database:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
+
+> Spring Boot's `spring-boot-docker-compose` support also starts this service automatically when you run the app
+> with `./mvnw spring-boot:run`.
 
 ## API Endpoints
 
@@ -191,6 +201,52 @@ Tests the entire application with a real PostgreSQL database using Testcontainer
 ./mvnw test -Dtest=SpringBootTestContainerPostgresqlApplicationTests
 ```
 
+### JSON Tests
+
+Tests JSON (de)serialization of the `Post` record with `@JsonTest`.
+
+```bash
+./mvnw test -Dtest=PostJsonTest
+```
+
+### Run All Tests
+
+```bash
+./mvnw clean verify
+```
+
+### Notes on Spring Boot 4 / Testcontainers 2
+
+- Testcontainers 2 uses the `testcontainers-` artifact prefix (`testcontainers-postgresql`,
+  `testcontainers-junit-jupiter`) and the `org.testcontainers.postgresql.PostgreSQLContainer` class.
+- Spring Boot 4 ships test slices in dedicated modules: `spring-boot-starter-data-jdbc-test` (`@DataJdbcTest`),
+  `spring-boot-starter-webmvc-test` (`@WebMvcTest`) and `spring-boot-resttestclient`
+  (`TestRestTemplate` + `@AutoConfigureTestRestTemplate`).
+- `@MockBean` has been replaced with `@MockitoBean`.
+- String templates (`STR."..."`) were removed from the JDK, so tests use text blocks with `.formatted(...)`.
+- Since JDK 23 annotation processing is no longer implicit, so Lombok and the configuration processor are declared
+  in `maven-compiler-plugin` `annotationProcessorPaths`.
+
+## Continuous Integration
+
+GitHub Actions ([`.github/workflows/maven.yml`](.github/workflows/maven.yml)) builds and tests the project on every
+push and pull request to `main` using **JDK 25 (Temurin)** with Maven dependency caching. On pushes to `main` it also
+submits the Maven dependency graph to GitHub to improve Dependabot alerts. The workflow can be triggered manually
+via `workflow_dispatch`.
+
+## Dependency Updates
+
+[Dependabot](.github/dependabot.yml) keeps dependencies up to date:
+
+| Ecosystem      | Schedule (Asia/Jakarta) | Grouping                                                                |
+|----------------|-------------------------|-------------------------------------------------------------------------|
+| Maven          | Daily, 05:00            | `spring-boot`, `testcontainers`, `springdoc`, `maven-plugins`, minor/patch |
+| GitHub Actions | Weekly (Mon), 05:00     | All actions in one PR                                                   |
+| Docker Compose | Weekly (Mon), 05:00     | PostgreSQL image in `compose.yaml`                                      |
+
+PRs are labelled (`dependencies`, `java`, `github_actions`, `docker`) and use conventional commit prefixes
+(`build(deps)`, `ci(deps)`, `build(docker)`).
+
 ## Project Structure
 
 - `src/main/java` - Java source code
@@ -198,10 +254,14 @@ Tests the entire application with a real PostgreSQL database using Testcontainer
   - `model` - Data models
   - `repository` - Data access layer
   - `exception` - Custom exceptions
+  - `client` - WebClient-based HTTP client
+  - `config` - Application configuration (WebClient)
 - `src/main/resources` - Application resources
   - `data/posts.json` - Initial data for the application
   - `schema.sql` - Database schema definition
 - `src/test/java` - Test source code
+- `compose.yaml` - PostgreSQL service for local development
+- `.github/` - GitHub Actions workflow and Dependabot configuration
 
 ## License
 
