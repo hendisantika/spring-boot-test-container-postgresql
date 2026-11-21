@@ -91,15 +91,15 @@ class PostControllerTest {
     void shouldFindPostWhenGivenValidId() throws Exception {
         Post post = new Post(1, 1, "Test Title", "Test Body", null);
         when(repository.findById(1)).thenReturn(Optional.of(post));
-        String json = STR."""
+        String json = """
                 {
-                    "id":\{post.id()},
-                    "userId":\{post.userId()},
-                    "title":"\{post.title()}",
-                    "body":"\{post.body()}",
+                    "id":%s,
+                    "userId":%s,
+                    "title":"%s",
+                    "body":"%s",
                     "version": null
                 }
-                """;
+                """.formatted(post.id(), post.userId(), post.title(), post.body());
 
         mockMvc.perform(get("/api/posts/1"))
                 .andExpect(status().isOk())
@@ -110,15 +110,15 @@ class PostControllerTest {
     void shouldCreateNewPostWhenGivenValidID() throws Exception {
         Post post = new Post(3, 1, "This is my brand new post", "TEST BODY", null);
         when(repository.save(post)).thenReturn(post);
-        String json = STR."""
+        String json = """
                 {
-                    "id":\{post.id()},
-                    "userId":\{post.userId()},
-                    "title":"\{post.title()}",
-                    "body":"\{post.body()}",
+                    "id":%s,
+                    "userId":%s,
+                    "title":"%s",
+                    "body":"%s",
                     "version": null
                 }
-                """;
+                """.formatted(post.id(), post.userId(), post.title(), post.body());
 
         mockMvc.perform(post("/api/posts")
                         .contentType("application/json")
@@ -132,15 +132,15 @@ class PostControllerTest {
         Post updated = new Post(1, 1, "This is my brand new post", "UPDATED BODY", 1);
         when(repository.findById(1)).thenReturn(Optional.of(posts.get(0)));
         when(repository.save(updated)).thenReturn(updated);
-        String requestBody = STR."""
+        String requestBody = """
                 {
-                    "id":\{updated.id()},
-                    "userId":\{updated.userId()},
-                    "title":"\{updated.title()}",
-                    "body":"\{updated.body()}",
-                    "version": \{updated.version()}
+                    "id":%s,
+                    "userId":%s,
+                    "title":"%s",
+                    "body":"%s",
+                    "version": %s
                 }
-                """;
+                """.formatted(updated.id(), updated.userId(), updated.title(), updated.body(), updated.version());
 
         mockMvc.perform(put("/api/posts/1")
                         .contentType("application/json")
@@ -152,15 +152,15 @@ class PostControllerTest {
     void shouldNotUpdateAndThrowNotFoundWhenGivenAnInvalidPostID() throws Exception {
         Post updated = new Post(50, 1, "This is my brand new post", "UPDATED BODY", 1);
         when(repository.save(updated)).thenReturn(updated);
-        String json = STR."""
+        String json = """
                 {
-                    "id":\{updated.id()},
-                    "userId":\{updated.userId()},
-                    "title":"\{updated.title()}",
-                    "body":"\{updated.body()}",
-                    "version": \{updated.version()}
+                    "id":%s,
+                    "userId":%s,
+                    "title":"%s",
+                    "body":"%s",
+                    "version": %s
                 }
-                """;
+                """.formatted(updated.id(), updated.userId(), updated.title(), updated.body(), updated.version());
 
         mockMvc.perform(put("/api/posts/999")
                         .contentType("application/json")
